@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bases de datos locales con LocalStorage E IndexedBD</title>
+</head>
+<body>
+    <script>
+        // Crear una base de datos
+        var db = openDatabase('miBaseDatos', '1.0', 'Base de datos de ejemplo', 2 * 1024 * 1024);
+        // Crear una tabla
+        db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY, nombre VARCHAR(50), apellido VARCHAR(50), edad INTEGER)');
+        });
+        // Insertar datos
+        db.transaction(function(tx) {
+            tx.executeSql('INSERT INTO usuarios (nombre, apellido, edad) VALUES (?, ?, ?)', ['Juan', 'Perez', '23']);
+            tx.executeSql('INSERT INTO usuarios (nombre, apellido, edad) VALUES (?, ?, ?)', ['Pedro', 'Gonzalez', '25']);
+            tx.executeSql('INSERT INTO usuarios (nombre, apellido, edad) VALUES (?, ?, ?)', ['Maria', 'Lopez', '22']);
+        });
+        // Consultar datos
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM usuarios', [], function(tx, results) {
+                var len = results.rows.length, i;
+                for (i = 0; i < len; i++) {
+                    var usuario = results.rows.item(i);
+                    console.log('Nombre: ' + usuario.nombre + ' Apellido: ' + usuario.apellido + ' Edad: ' + usuario.edad);
+                }
+            });
+        });
+
+        // Eliminar datos
+        db.transaction(function(tx) {
+            tx.executeSql('DELETE FROM usuarios WHERE id = ?', [2]);
+        });
+        // Actualizar datos
+        db.transaction(function(tx) {
+            tx.executeSql('UPDATE usuarios SET edad = ? WHERE id = ?', ['23', '1']);
+        });
+
+        // Eliminar la base de datos
+        db.transaction(function(tx) {
+            tx.executeSql('DROP TABLE usuarios');
+        });
+ 
+    </script>
+    
+</body>
+</html>

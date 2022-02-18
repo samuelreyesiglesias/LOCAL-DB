@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB SQL LOCAL STORAGE</title>
+</head>
+<body>
+    <script>
+        // Crear una base de datos
+        var db = openDatabase('DB1','1.0','Base datos Lorena',2*1024*1024);
+        db.transaction(function(text){
+            text.executeSql('CREATE TABLE IF NOT EXISTS INVOICE (IdInvoice INTEGER, DocNum VARCHAR(50), DocEntry VARCHAR(50))');
+        });
+
+        id =1;
+        docNum = 100;
+        docEntry = 100;
+        // Insertar datos
+        db.transaction(function(text){
+            text.executeSql('INSERT INTO INVOICE (IdInvoice, DocNum, DocEntry) VALUES (?, ?, ?)', [id, docNum, docEntry]); 
+        });  
+        // Consultar datos
+        db.transaction(function(text){
+            id++;
+            docNum++;
+            docEntry++;
+            
+            text.executeSql('SELECT * FROM INVOICE', [], function(tx, results){
+                var len = results.rows.length, i;
+                for (i = 0; i < len; i++) {
+                    var invoice = results.rows.item(i);
+                    console.log('IdInvoice: ' + invoice.IdInvoice + ' DocNum: ' + invoice.DocNum + ' DocEntry: ' + invoice.DocEntry);
+                }
+            });
+        });
+        // // Eliminar datos
+        // db.transaction(function(text){
+        //     text.executeSql('DELETE FROM INVOICE WHERE IdInvoice = ?', [1]);
+        // });
+        // // Actualizar datos
+        // db.transaction(function(text){
+        //     text.executeSql('UPDATE INVOICE SET DocNum = ? WHERE IdInvoice = ?', ['200', '1']);
+        // });
+        // // Eliminar la tabla
+        // db.transaction(function(text){
+        //     text.executeSql('DROP TABLE INVOICE');
+        // });
+
+         
+        
+    </script>
+</body>
+</html>
